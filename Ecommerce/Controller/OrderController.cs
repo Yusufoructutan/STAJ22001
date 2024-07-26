@@ -31,12 +31,22 @@ public class OrderController : ControllerBase
             var orderId = await _orderService.CreateOrderFromCartAsync(userId);
 
             // Başarıyla oluşturulan siparişi döndürün
-            return CreatedAtAction(nameof(GetOrderById), new { id = orderId }, new { OrderId = orderId });
+            return CreatedAtAction(
+                nameof(GetOrderById),
+                new { id = orderId },
+                new
+                {
+                    OrderId = orderId,
+                    Message = "Sipariş başarıyla oluşturuldu."
+                });
         }
         catch (InvalidOperationException ex)
         {
             // Hata durumunda uygun yanıt döndürün
-            return BadRequest(ex.Message);
+            return BadRequest(new
+            {
+                ErrorMessage = ex.Message
+            });
         }
     }
 

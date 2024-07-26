@@ -13,6 +13,10 @@ public class ProductController : ControllerBase
         _productService = productService;
     }
 
+
+
+
+
     // GET api/product/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(int id)
@@ -52,11 +56,44 @@ public class ProductController : ControllerBase
         return CreatedAtAction(nameof(GetProductById), new { id = productId }, response); // 201 Created
     }
 
-    // DELETE api/product/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        await _productService.DeleteProductAsync(id);
-        return NoContent(); // 204 No Content
+        try
+        {
+            await _productService.DeleteProductAsync(id);
+            return Ok(new { Message = "Ürün başarıyla silindi." });
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            // _logger.LogError(ex, "Error while deleting product with ID {id}", id);
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto updatedProductDto)
+    {
+        if (updatedProductDto == null || id != updatedProductDto.ProductId)
+        {
+            return BadRequest("Ürün verileri geçersiz veya kimlik uyuşmazlığı yaşanıyor.");
+        }
+
+        try
+        {
+            await _productService.UpdateProductAsync(id, updatedProductDto);
+            return Ok(new { Message = "Ürün başarıyla güncellendi." });
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            // _logger.LogError(ex, "Error while updating product with ID {id}", id);
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+
+
 }

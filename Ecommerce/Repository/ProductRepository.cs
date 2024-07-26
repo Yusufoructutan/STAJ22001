@@ -12,21 +12,15 @@ namespace Ecommerce.Repository
         {
             _context = context;
         }
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+
+        // Yalnızca GetAllAsync yöntemini kullanacağız
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
             return await _context.Products
                 .Include(p => p.ProductCategory) // Product ve ProductCategory ilişkisini yükle
                 .ThenInclude(pc => pc.Category)   // Category'yi yükle
                 .ToListAsync();
         }
-        public async Task<List<Product>> GetProductsByIdsAsync(IEnumerable<int> productIds)
-        {
-            return await _context.Products
-                .Where(p => productIds.Contains(p.ProductId))
-                .ToListAsync();
-        }
-
-
 
         public async Task<Product> GetByIdAsync(int id)
         {
@@ -34,14 +28,6 @@ namespace Ecommerce.Repository
                 .Include(p => p.ProductCategory) // Product ve ProductCategory ilişkisini yükle
                 .ThenInclude(pc => pc.Category)   // Category'yi yükle
                 .FirstOrDefaultAsync(p => p.ProductId == id);
-        }
-
-        public async Task<IEnumerable<Product>> GetAllAsync()
-        {
-            return await _context.Products
-                .Include(p => p.ProductCategory) // Product ve ProductCategory ilişkisini yükle
-                .ThenInclude(pc => pc.Category)   // Category'yi yükle
-                .ToListAsync();
         }
 
         public async Task AddAsync(Product product)
@@ -64,6 +50,14 @@ namespace Ecommerce.Repository
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // Opsiyonel: Product'ların belirli bir liste id'sine sahip olanlarını almak için ek bir yöntem
+        public async Task<List<Product>> GetProductsByIdsAsync(IEnumerable<int> productIds)
+        {
+            return await _context.Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToListAsync();
         }
     }
 }

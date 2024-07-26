@@ -1,3 +1,4 @@
+using AutoMapper;
 using Ecommerce.Business;
 using Ecommerce.Repository;
 using Ecommerce.Services;
@@ -7,6 +8,7 @@ using Ecommerce.Repository.Entity;
 using Ecommerce.Repository.Models;
 using Microsoft.OpenApi.Models;
 using Ecommerce.Bussines;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,14 +18,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
-    c.OperationFilter<SwaggerIgnoreFilter>(); // Burada filtremizi ekliyoruz
-
+    c.OperationFilter<SwaggerIgnoreFilter>();
 });
 
 builder.Services.AddDbContext<ECommerceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repository Katmaný
+// Repository Layer
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<CartItem>, Repository<CartItem>>();
@@ -31,14 +32,11 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
-
-
-// Business Katmaný
+// Business Layer
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 builder.Services.AddScoped<IProductBusiness, ProductBusiness>();
 builder.Services.AddScoped<ICartItemBusiness, CartItemBussiness>();
 builder.Services.AddScoped<IOrderBusiness, OrderBusiness>();
-
 
 // Service Layer
 builder.Services.AddScoped<IUserService, UserService>();
@@ -46,6 +44,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// AutoMapper
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

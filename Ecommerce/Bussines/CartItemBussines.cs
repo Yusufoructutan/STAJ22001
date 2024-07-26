@@ -22,7 +22,7 @@ namespace Ecommerce.Bussines
             var cartItems = await _cartItemRepository.GetAllAsync();
             return cartItems.Where(ci => ci.UserId == userId).ToList();
         }
-        public async Task RemoveFromCartAsync(int cartItemId)  // Yeni metod
+        public async Task RemoveFromCartAsync(int cartItemId)  
         {
             var cartItem = await _cartItemRepository.GetByIdAsync(cartItemId);
             if (cartItem != null)

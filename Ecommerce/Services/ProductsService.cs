@@ -1,7 +1,6 @@
 ﻿using Ecommerce.DTO;
-using Ecommerce.Business; // Doğru namespace
+using Ecommerce.Business;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Repository.Models;
@@ -47,24 +46,22 @@ namespace Ecommerce.Services
                 .ToListAsync();
         }
 
-
-
-
-
-
-
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
             var product = await _productBusiness.GetProductByIdAsync(id);
 
-            return new ProductDto
+            if (product == null)
+            {
+                return null;
+            }
+
+            var productDto = new ProductDto
             {
                 ProductId = product.ProductId,
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
-                // Tekil ProductCategoryDto oluşturma
                 ProductCategories = product.ProductCategory != null
                     ? new List<ProductCategoryDto>
                     {
@@ -75,28 +72,25 @@ namespace Ecommerce.Services
                     CategoryName = product.ProductCategory.Category.Name
                 }
                     }
-                    : new List<ProductCategoryDto>() // Boş liste döndürmek
+                    : new List<ProductCategoryDto>()
             };
+
+            return productDto;
         }
-
-
 
         public async Task<int> AddProductAsync(ProductDto productDto)
         {
-            // ProductDto'yu işleyerek iş katmanına ilet
             return await _productBusiness.AddProductAsync(productDto);
-        }
-
-        public async Task UpdateProductAsync(ProductDto productDto)
-        {
-            // ProductDto'yu işleyerek iş katmanına ilet
-            await _productBusiness.UpdateProductAsync(productDto);
         }
 
         public async Task DeleteProductAsync(int id)
         {
-            // Ürünü silmek için iş katmanına ilet
             await _productBusiness.DeleteProductAsync(id);
+        }
+
+        public async Task UpdateProductAsync(int productId, ProductDto updatedProductDto)
+        {
+            await _productBusiness.UpdateProductAsync(productId, updatedProductDto);
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using Ecommerce.Repository;
+﻿using Ecommerce.DTO;
+using Ecommerce.Repository;
 using Ecommerce.Repository.Entity;
-using Ecommerce.DTO;
+using Ecommerce.Repository.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Ecommerce.Repository.Models;
+
 public class ProductBusiness : IProductBusiness
 {
     private readonly IProductRepository _productRepository;
@@ -12,8 +14,7 @@ public class ProductBusiness : IProductBusiness
     private readonly IRepository<Category> _categoryRepository;
     private readonly ECommerceContext _context;
 
-    public ProductBusiness(IProductRepository productRepository,IRepository<ProductCategory> productCategoryRepository, ECommerceContext context,
-        IRepository<Category> categoryRepository)
+    public ProductBusiness(IProductRepository productRepository, IRepository<ProductCategory> productCategoryRepository, ECommerceContext context, IRepository<Category> categoryRepository)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
@@ -26,72 +27,9 @@ public class ProductBusiness : IProductBusiness
         return await _productRepository.GetByIdAsync(id);
     }
 
-
-
-    public async Task<int> AddProductAsync(ProductDto productDto)
-    {
-        // Ürün bilgilerini oluştur
-        var product = new Product
-        {
-            Name = productDto.Name,
-            Description = productDto.Description,
-            Price = productDto.Price,
-            StockQuantity = productDto.StockQuantity
-        };
-
-        // Ürünü veritabanına ekle
-        await _productRepository.AddAsync(product);
-        await _context.SaveChangesAsync(); // Veritabanı işlemlerini kaydet
-
-        // Kategorileri ekle ve ilişkilendir
-        foreach (var categoryDto in productDto.ProductCategories)
-        {
-            // Kategori adını kullanarak ilgili kategoriyi bul
-            var category = await _categoryRepository.GetAsync(c => c.Name == categoryDto.CategoryName);
-
-            if (category == null)
-            {
-                // Kategori bulunamazsa uygun bir hata yönetimi yapabilirsiniz
-                throw new Exception($"Kategori '{categoryDto.CategoryName}' bulunamadı");
-            }
-
-            // Kategori ile ürünü ilişkilendir
-            var productCategory = new ProductCategory
-            {
-                ProductId = product.ProductId,
-                CategoryId = category.CategoryId
-            };
-
-            await _productCategoryRepository.AddAsync(productCategory);
-        }
-
-        // Ürün ID'sini döndür
-        return product.ProductId;
-    }
-
-
-
-
-    public async Task UpdateProductAsync(ProductDto productDto)
-    {
-        var product = new Product
-        {
-            ProductId = productDto.ProductId,
-            Name = productDto.Name,
-            Description = productDto.Description,
-            Price = productDto.Price
-        };
-        await _productRepository.UpdateAsync(product);
-    }
-
-    public async Task DeleteProductAsync(int id)
-    {
-        await _productRepository.DeleteAsync(id);
-    }
-
     public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
     {
-        var products = await _productRepository.GetAllProductsAsync();
+        var products = await _productRepository.GetAllAsync();
 
         return products.Select(p => new ProductDto
         {
@@ -101,8 +39,77 @@ public class ProductBusiness : IProductBusiness
             Price = p.Price,
             StockQuantity = p.StockQuantity,
             // ProductCategoryDto ekleyin
-           
+
         });
     }
 
+    public async Task<int> AddProductAsync(ProductDto productDto)
+    {
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            StockQuantity = productDto.StockQuantity
+        };
+
+        await _productRepository.AddAsync(product);
+        await _context.SaveChangesAsync();
+
+        foreach (var categoryDto in productDto.ProductCategories)
+        {
+            var category = await _categoryRepository.GetAsync(c => c.Name == categoryDto.CategoryName);
+            if (category == null)
+            {
+                throw new Exception($"Kategori '{categoryDto.CategoryName}' bulunamadı");
+            }
+
+            var productCategory = new ProductCategory
+            {
+                ProductId = product.ProductId,
+                CategoryId = category.CategoryId
+            };
+
+            await _productCategoryRepository.AddAsync(productCategory);
+        }
+
+        return product.ProductId;
+    }
+
+    public async Task UpdateProductAsync(int productId, ProductDto updatedProductDto)
+    {
+        var product = await _context.Products
+            .Include(p => p.ProductCategory)
+            .FirstOrDefaultAsync(p => p.ProductId == productId);
+
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        product.Name = updatedProductDto.Name;
+        product.Description = updatedProductDto.Description;
+        product.Price = updatedProductDto.Price;
+        product.StockQuantity = updatedProductDto.StockQuantity;
+
+        _context.ProductCategories.RemoveRange(product.ProductCategory);
+
+        foreach (var category in updatedProductDto.ProductCategories)
+        {
+            var productCategory = new ProductCategory
+            {
+                ProductId = product.ProductId,
+                CategoryId = category.CategoryId
+            };
+
+            _context.ProductCategories.Add(productCategory);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProductAsync(int id)
+    {
+        await _productRepository.DeleteAsync(id);
+    }
 }
