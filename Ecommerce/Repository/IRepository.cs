@@ -7,7 +7,6 @@ namespace Ecommerce.Repository
     public interface IRepository<T> where T : class
     {
         Task<T> GetAsync(Expression<Func<T, bool>> predicate);
-
         Task<T> GetByIdAsync(int id);
         IQueryable<T> GetAll();
         Task<IEnumerable<T>> GetAllAsync();

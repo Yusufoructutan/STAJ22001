@@ -27,5 +27,5 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
     }
 
-    // Diğer CRUD metodlarını burada implement edebilirsiniz
+    
 }
