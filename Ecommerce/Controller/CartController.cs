@@ -23,18 +23,18 @@ namespace Ecommerce.Controller
         {
             if (cartItemDto == null)
             {
-                return BadRequest("Invalid cart item data.");
+                return BadRequest("Sepet ürünü verileri geçersiz.");
             }
 
             await _cartService.AddToCartAsync(cartItemDto);
-            return Ok("Product added to cart successfully.");
+            return Ok("Ürün sepete başarıyla eklendi.");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveFromCart(int id)
         {
             await _cartService.RemoveFromCartAsync(id);
-            return Ok("Product removed from cart successfully.");
+            return Ok("Ürün sepetten başarıyla kaldırıldı.");
         }
 
         [HttpGet("{userId}")]

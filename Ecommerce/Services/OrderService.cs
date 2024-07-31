@@ -26,7 +26,7 @@ public class OrderService : IOrderService
 
         if (order == null)
         {
-            return null; // veya uygun bir hata yönetimi
+            return null; 
         }
 
         return new OrderDto
@@ -40,7 +40,7 @@ public class OrderService : IOrderService
                 OrderItemId = oi.OrderItemId,
                 ProductId = oi.ProductId,
                 Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice // Eğer OrderItem'da UnitPrice yoksa, uygun bir değer belirlemelisiniz
+                UnitPrice = oi.UnitPrice 
             }).ToList()
         };
     }

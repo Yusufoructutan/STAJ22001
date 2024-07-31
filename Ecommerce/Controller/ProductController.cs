@@ -103,7 +103,6 @@ public class ProductController : ControllerBase
         catch (Exception ex)
         {
             // Log the exception
-             _logger.LogError(ex, "Error while updating product with ID {id}", id);
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }

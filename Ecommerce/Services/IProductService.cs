@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 public interface IProductService
 {
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync(); // Metodu ekleyin
+        Task<IEnumerable<ProductDto>> GetAllProductsAsync(); 
 
     Task<ProductDto> GetProductByIdAsync(int id);
     Task<int> AddProductAsync(ProductDto productDto);

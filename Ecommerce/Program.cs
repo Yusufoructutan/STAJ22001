@@ -53,8 +53,12 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SwaggerIgnoreFilter>();
 });
 
+
+//Entity Framework Core için ECommerceContext baðlamýný ekler ve SQL Server veritabaný baðlantýsýný yapýlandýrýr.
 builder.Services.AddDbContext<ECommerceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 // Repository Layer
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
