@@ -7,5 +7,8 @@ namespace Ecommerce.Services
     {
         Task RegisterAsync(RegisterDto registerDto);
         Task<String> LoginAsync(LoginDto loginDto);
+
+        Task AssignAdminRoleAsync(int userId);
+
     }
 }

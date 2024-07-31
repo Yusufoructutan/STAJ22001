@@ -10,5 +10,10 @@ namespace Ecommerce.Business
         Task<User> GetUserByUsernameAsync(string username); // Yeni metod eklendi
         Task RegisterUserAsync(User user, string password);
         Task<bool> ValidateUserAsync(string username, string password);
+
+        Task UpdateUserAsync(User user);
+
+
     }
+
 }

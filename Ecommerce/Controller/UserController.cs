@@ -1,8 +1,10 @@
-﻿using Ecommerce.Services;
+﻿using Ecommerce.DTO;
+using Ecommerce.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -12,26 +14,35 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    // Kullanıcı kaydı
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         await _userService.RegisterAsync(registerDto);
-        return Ok();
+        return Ok("Kayıt başarılı.");
     }
 
+    // Kullanıcı girişi ve JWT token alma
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        var message = await _userService.LoginAsync(loginDto);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
-        if (message == "Giriş başarılı! İyi alışverişler.")
+        var token = await _userService.LoginAsync(loginDto);
+
+        if (token.StartsWith("Hatalı"))
         {
-            return Ok(new { Message = message });
+            return Unauthorized(token);
         }
-        else
-        {
-            return Unauthorized(new { Message = message });
-        }
+
+        return Ok(new { Token = token });
     }
-
 }

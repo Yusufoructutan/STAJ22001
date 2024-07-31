@@ -40,5 +40,11 @@ namespace Ecommerce.Business
 
             return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            // Kullanıcıyı güncelle
+            await _userRepository.UpdateAsync(user);
+        }
     }
 }

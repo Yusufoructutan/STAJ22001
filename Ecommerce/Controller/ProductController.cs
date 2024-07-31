@@ -1,8 +1,9 @@
 ﻿using Ecommerce.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
@@ -12,7 +13,6 @@ public class ProductController : ControllerBase
     {
         _productService = productService;
     }
-
 
 
 
@@ -29,6 +29,10 @@ public class ProductController : ControllerBase
         return Ok(product); // 200 OK
     }
 
+
+
+
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetAll()
     {
@@ -36,7 +40,10 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
-    // POST api/product
+
+
+
+    [Authorize(Policy = "AdminOnly")] 
     [HttpPost]
     public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto)
     {
@@ -56,6 +63,9 @@ public class ProductController : ControllerBase
         return CreatedAtAction(nameof(GetProductById), new { id = productId }, response); // 201 Created
     }
 
+
+
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
@@ -73,6 +83,10 @@ public class ProductController : ControllerBase
     }
 
 
+
+
+
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto updatedProductDto)
     {
@@ -89,7 +103,7 @@ public class ProductController : ControllerBase
         catch (Exception ex)
         {
             // Log the exception
-            // _logger.LogError(ex, "Error while updating product with ID {id}", id);
+             _logger.LogError(ex, "Error while updating product with ID {id}", id);
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }

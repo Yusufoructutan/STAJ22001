@@ -18,6 +18,8 @@ public class UserRepository : IRepository<User>
         _dbSet = _context.Set<User>();
 
     }
+   
+
     public async Task<User> GetAsync(Expression<Func<User, bool>> predicate)
     {
         return await _dbSet.SingleOrDefaultAsync(predicate);
@@ -58,4 +60,6 @@ public class UserRepository : IRepository<User>
             await _context.SaveChangesAsync();
         }
     }
+
+  
 }
