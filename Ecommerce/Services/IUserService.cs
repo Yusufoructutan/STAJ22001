@@ -1,14 +1,6 @@
-﻿using Ecommerce.DTO;
-using System.Threading.Tasks;
-
-namespace Ecommerce.Services
+﻿public interface IUserService
 {
-    public interface IUserService
-    {
-        Task RegisterAsync(RegisterDto registerDto);
-        Task<String> LoginAsync(LoginDto loginDto);
-
-        Task AssignAdminRoleAsync(int userId);
-
-    }
+    Task RegisterAsync(RegisterDto registerDto);
+    Task AssignAdminRoleAsync(int userId);
+    Task<string> LoginAsync(LoginDto loginDto);
 }

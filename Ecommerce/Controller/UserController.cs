@@ -27,7 +27,6 @@ public class UserController : ControllerBase
         return Ok("Kayıt başarılı.");
     }
 
-    // Kullanıcı girişi ve JWT token alma
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
@@ -40,9 +39,11 @@ public class UserController : ControllerBase
 
         if (token.StartsWith("Hatalı"))
         {
-            return Unauthorized(token);
+            return Unauthorized(new { Message = token });
         }
 
         return Ok(new { Token = token });
     }
+
+
 }

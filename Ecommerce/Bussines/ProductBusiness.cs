@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 public class ProductBusiness : IProductBusiness
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IRepository<Product> _productRepository;
     private readonly IRepository<ProductCategory> _productCategoryRepository;
     private readonly IRepository<Category> _categoryRepository;
     private readonly ECommerceContext _context;
 
-    public ProductBusiness(IProductRepository productRepository, IRepository<ProductCategory> productCategoryRepository, ECommerceContext context, IRepository<Category> categoryRepository)
+    public ProductBusiness(IRepository<Product> productRepository, IRepository<ProductCategory> productCategoryRepository, ECommerceContext context,IRepository<Category> categoryRepository)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
@@ -27,11 +27,11 @@ public class ProductBusiness : IProductBusiness
         return await _productRepository.GetByIdAsync(id);
     }
 
-    public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+    public async Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync()
     {
         var products = await _productRepository.GetAllAsync();
 
-        return products.Select(p => new ProductDto
+        return products.Select(p => new ResponseProductDto
         {
             ProductId = p.ProductId,
             Name = p.Name,

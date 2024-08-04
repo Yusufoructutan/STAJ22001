@@ -1,15 +1,8 @@
 ﻿using Ecommerce.Repository.Entity;
 
-namespace Ecommerce.Bussines
+public interface ICartItemBusiness
 {
-    public interface ICartItemBusiness
-    {
-
-        Task AddToCartAsync(CartItem cartItem);
-        Task<IEnumerable<CartItem>> GetCartItemsByUserIdAsync(int userId);
-
-        Task RemoveFromCartAsync(int cartItemId);  // Yeni metod
-
-
-    }
+    Task AddToCartAsync(CartItem cartItem);
+    Task RemoveFromCartAsync(int cartItemId);
+    Task<IEnumerable<CartItem>> GetCartItemsByUserIdAsync();
 }

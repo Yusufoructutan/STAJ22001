@@ -1,6 +1,6 @@
-﻿using Ecommerce.Bussines;
-using Ecommerce.Repository.Entity;
+﻿using Ecommerce.Repository.Entity;
 using Ecommerce.Repository;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,47 +9,70 @@ public class OrderBusiness : IOrderBusiness
     private readonly ICartItemRepository _cartItemRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-
-    public OrderBusiness(IOrderRepository orderRepository, ICartItemRepository cartItemRepository, IProductRepository productRepository)
+    private readonly IRepository<Product> _repository;
+   
+    public OrderBusiness(IRepository<Product> repository, IOrderRepository orderRepository, ICartItemRepository cartItemRepository, IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
         _cartItemRepository = cartItemRepository;
         _productRepository = productRepository;
+        _repository= repository;    
+       
     }
 
     public async Task<int> CreateOrderFromCartAsync(int userId)
     {
-        // Kullanıcının sepetindeki ürünleri al
         var cartItems = await _cartItemRepository.GetCartItemsByUserIdAsync(userId);
-
-        // Sepet boşsa hata döndür
         if (!cartItems.Any())
         {
             throw new InvalidOperationException("Sepetiniz boş. Sipariş oluşturulamaz.");
         }
 
-        // Ürün ID'lerinden ürün bilgilerini al
+        var allProducts = await _productRepository.GetAllAsync();
         var productIds = cartItems.Select(ci => ci.ProductId).Distinct();
-        var products = await _productRepository.GetProductsByIdsAsync(productIds);
+        var products = allProducts.Where(p => productIds.Contains(p.ProductId)).ToList();
 
-        // Sipariş oluştur
+        var orderItems = new List<OrderItem>();
+
         var order = new Order
         {
             UserId = userId,
             OrderDate = DateTime.Now,
-            TotalAmount = cartItems.Sum(ci => ci.Quantity * products.First(p => p.ProductId == ci.ProductId).Price) // Toplam tutar hesapla
+            TotalAmount = cartItems.Sum(ci => ci.Quantity * products.First(p => p.ProductId == ci.ProductId).Price),
+            OrderItems = orderItems // Burada OrderItems'ı ekliyoruz
         };
 
-        // Sipariş ekle
+        // OrderItems'ı oluşturun
+        foreach (var cartItem in cartItems)
+        {
+            var product = products.FirstOrDefault(p => p.ProductId == cartItem.ProductId);
+            if (product != null)
+            {
+                if (product.StockQuantity < cartItem.Quantity)
+                {
+                    throw new InvalidOperationException($"Yetersiz stok: {product.Name} ürünü için yeterli stok yok.");
+                }
+
+                product.StockQuantity -= cartItem.Quantity;
+                // Ürünün stok miktarını güncelle
+                await _repository.UpdateAsync(product);
+
+                // OrderItem'ı oluşturun
+                orderItems.Add(new OrderItem
+                {
+                    ProductId = cartItem.ProductId,
+                    Quantity = cartItem.Quantity,
+                    UnitPrice = product.Price
+                });
+            }
+        }
+
         await _orderRepository.AddAsync(order);
 
-        // Sepeti temizle
         await _cartItemRepository.ClearCartAsync(userId);
 
-        // Oluşturulan siparişin ID'sini döndür
         return order.OrderId;
     }
-
 
 
 
@@ -57,4 +80,8 @@ public class OrderBusiness : IOrderBusiness
     {
         return await _orderRepository.GetOrderByIdAsync(orderId);
     }
+
+
+
+
 }

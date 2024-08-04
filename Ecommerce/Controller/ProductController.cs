@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 [ApiController]
-[Authorize]
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
@@ -24,9 +23,9 @@ public class ProductController : ControllerBase
         var product = await _productService.GetProductByIdAsync(id);
         if (product == null)
         {
-            return NotFound(); // 404 Not Found
+            return NotFound(); 
         }
-        return Ok(product); // 200 OK
+        return Ok(product); 
     }
 
 
@@ -49,7 +48,7 @@ public class ProductController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState); // 400 Bad Request
+            return BadRequest(ModelState); 
         }
 
         var productId = await _productService.AddProductAsync(productDto);
@@ -60,7 +59,7 @@ public class ProductController : ControllerBase
             ProductId = productId
         };
 
-        return CreatedAtAction(nameof(GetProductById), new { id = productId }, response); // 201 Created
+        return CreatedAtAction(nameof(GetProductById), new { id = productId }, response); 
     }
 
 
@@ -90,10 +89,7 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto updatedProductDto)
     {
-        if (updatedProductDto == null || id != updatedProductDto.ProductId)
-        {
-            return BadRequest("Ürün verileri geçersiz veya kimlik uyuşmazlığı yaşanıyor.");
-        }
+     
 
         try
         {

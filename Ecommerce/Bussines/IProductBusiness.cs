@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 public interface IProductBusiness
 {
     // Tüm ürünleri DTO olarak al
-    Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+    Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync();
 
     // Belirli bir ürünün detaylarını Product olarak al
     Task<Product> GetProductByIdAsync(int id);

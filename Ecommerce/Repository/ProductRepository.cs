@@ -1,16 +1,19 @@
 ﻿using Ecommerce.Repository.Models;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Repository.Entity;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ecommerce.Repository
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : Repository<Product>, IProductRepository
     {
         private readonly ECommerceContext _context;
 
-        public ProductRepository(ECommerceContext context)
+        public ProductRepository(ECommerceContext context) : base(context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         // Yalnızca GetAllAsync yöntemini kullanacağız
@@ -21,6 +24,8 @@ namespace Ecommerce.Repository
                 .ThenInclude(pc => pc.Category)   // Category'yi yükle
                 .ToListAsync();
         }
+
+
 
         public async Task<Product> GetByIdAsync(int id)
         {
@@ -55,9 +60,23 @@ namespace Ecommerce.Repository
         // Opsiyonel: Product'ların belirli bir liste id'sine sahip olanlarını almak için ek bir yöntem
         public async Task<List<Product>> GetProductsByIdsAsync(IEnumerable<int> productIds)
         {
-            return await _context.Products
-                .Where(p => productIds.Contains(p.ProductId))
-                .ToListAsync();
+            if (productIds == null || !productIds.Any())
+            {
+                return new List<Product>(); // Boş liste döndür
+            }
+
+            try
+            {
+                return await _context.Products
+                    .Where(p => productIds.Contains(p.ProductId))
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Hata loglama
+                Console.WriteLine($"Hata: {ex.Message}");
+                throw; // Hatanın üst seviyeye iletilmesini sağlar
+            }
         }
     }
 }

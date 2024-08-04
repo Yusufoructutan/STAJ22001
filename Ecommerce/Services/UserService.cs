@@ -1,10 +1,13 @@
 ﻿using Ecommerce.Business;
 using Ecommerce.Repository.Entity;
 using Ecommerce.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 public class UserService : IUserService
 {
@@ -31,7 +34,6 @@ public class UserService : IUserService
         await _userBusiness.RegisterUserAsync(user, registerDto.Password);
     }
 
-
     public async Task AssignAdminRoleAsync(int userId)
     {
         var user = await _userBusiness.GetUserByIdAsync(userId);
@@ -42,8 +44,6 @@ public class UserService : IUserService
         }
     }
 
-
-
     public async Task<string> LoginAsync(LoginDto loginDto)
     {
         var isValidUser = await _userBusiness.ValidateUserAsync(loginDto.Username, loginDto.Password);
@@ -53,14 +53,14 @@ public class UserService : IUserService
             var user = await _userBusiness.GetUserByUsernameAsync(loginDto.Username);
             if (user == null)
             {
-                return "Kullanıcı bulunamadı."; // Hata mesajı
+                return "Hatalı kullanıcı adı veya şifre."; // Genel hata mesajı
             }
 
             var token = GenerateJwtToken(user);
             return token; // Başarıyla oluşturulan token
         }
 
-        return "Hatalı kullanıcı adı veya şifre."; // Hata mesajı
+        return "Hatalı kullanıcı adı veya şifre."; // Genel hata mesajı
     }
 
     private string GenerateJwtToken(User user)
@@ -77,7 +77,7 @@ public class UserService : IUserService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddHours(1), // Token süresi
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
             Issuer = _configuration["Jwt:Issuer"], // Konfigürasyondan Issuer al
             Audience = _configuration["Jwt:Audience"] // Konfigürasyondan Audience al

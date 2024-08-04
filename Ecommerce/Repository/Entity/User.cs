@@ -11,6 +11,10 @@ namespace Ecommerce.Repository.Entity
         public DateTime CreatedDate { get; set; }
         public string Role { get; set; }
 
+
+
+
+
         // Navigasyon Özellikleri
         public ICollection<CartItem> CartItems { get; set; }
         public ICollection<Order> Orders { get; set; }

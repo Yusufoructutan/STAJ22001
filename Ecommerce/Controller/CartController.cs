@@ -1,47 +1,53 @@
 ﻿using Ecommerce.DTO;
-using Ecommerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
-namespace Ecommerce.Controller
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class CartController : ControllerBase
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CartController : ControllerBase
+    private readonly ICartItemService _cartService;
+
+    public CartController(ICartItemService cartService)
     {
-        private readonly ICartItemService _cartService;
+        _cartService = cartService;
+    }
 
-        public CartController(ICartItemService cartService)
+    [HttpPost]
+    public async Task<IActionResult> AddToCart([FromBody] CartItemDto cartItemDto)
+    {
+        if (cartItemDto == null)
         {
-            _cartService = cartService;
+            return BadRequest("Sepet ürünü verileri geçersiz.");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddToCart([FromBody] CartItemDto cartItemDto)
-        {
-            if (cartItemDto == null)
-            {
-                return BadRequest("Sepet ürünü verileri geçersiz.");
-            }
+        await _cartService.AddToCartAsync(cartItemDto);
+        return Ok("Ürün sepete başarıyla eklendi.");
+    }
 
-            await _cartService.AddToCartAsync(cartItemDto);
-            return Ok("Ürün sepete başarıyla eklendi.");
-        }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveFromCart(int id)
-        {
-            await _cartService.RemoveFromCartAsync(id);
-            return Ok("Ürün sepetten başarıyla kaldırıldı.");
-        }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetCartItems(int userId)
+
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> RemoveFromCart(int id)
+    {
+        await _cartService.RemoveFromCartAsync(id);
+        return Ok("Ürün sepetten başarıyla kaldırıldı.");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCartItems()
+    {
+        try
         {
-            var cartItems = await _cartService.GetCartItemsAsync(userId);
+            var cartItems = await _cartService.GetCartItemsAsync();
             return Ok(cartItems);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(ex.Message);
         }
     }
 }

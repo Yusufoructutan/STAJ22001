@@ -33,6 +33,10 @@ namespace Ecommerce.Business
             await _userRepository.AddAsync(user);
         }
 
+
+
+
+
         public async Task<bool> ValidateUserAsync(string username, string password)
         {
             var user = await GetUserByUsernameAsync(username);
@@ -40,6 +44,10 @@ namespace Ecommerce.Business
 
             return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         }
+
+
+
+
 
         public async Task UpdateUserAsync(User user)
         {

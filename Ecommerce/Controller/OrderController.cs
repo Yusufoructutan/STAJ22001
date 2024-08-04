@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
+
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
@@ -13,6 +15,7 @@ public class OrderController : ControllerBase
     {
         _orderService = orderService;
     }
+
     private int GetCurrentUserId()
     {
         // Kullanıcı kimliğini almak için ASP.NET Core Identity kullanıyorsanız:
@@ -23,6 +26,7 @@ public class OrderController : ControllerBase
         }
         throw new InvalidOperationException("Kullanıcı kimliği alınamadı.");
     }
+
     [HttpPost]
     public async Task<IActionResult> CreateOrder()
     {
@@ -59,7 +63,6 @@ public class OrderController : ControllerBase
         {
             return NotFound();
         }
-
         return Ok(orderDto);
     }
 }

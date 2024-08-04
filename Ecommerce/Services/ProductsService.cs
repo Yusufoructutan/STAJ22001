@@ -19,12 +19,12 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync()
         {
             return await _context.Products
                 .Include(p => p.ProductCategory) // ProductCategory'yi de dahil et
                 .ThenInclude(pc => pc.Category) // Category'yi de dahil et
-                .Select(p => new ProductDto
+                .Select(p => new ResponseProductDto
                 {
                     ProductId = p.ProductId,
                     Name = p.Name,
@@ -46,7 +46,7 @@ namespace Ecommerce.Services
                 .ToListAsync();
         }
 
-        public async Task<ProductDto> GetProductByIdAsync(int id)
+        public async Task<ResponseProductDto> GetProductByIdAsync(int id)
         {
             var product = await _productBusiness.GetProductByIdAsync(id);
 
@@ -55,7 +55,7 @@ namespace Ecommerce.Services
                 return null;
             }
 
-            var productDto = new ProductDto
+            var productDto = new ResponseProductDto
             {
                 ProductId = product.ProductId,
                 Name = product.Name,

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 public interface IProductService
 {
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync(); 
+        Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync(); 
 
-    Task<ProductDto> GetProductByIdAsync(int id);
+    Task<ResponseProductDto> GetProductByIdAsync(int id);
     Task<int> AddProductAsync(ProductDto productDto);
     Task UpdateProductAsync(int productId, ProductDto updatedProductDto);
     Task DeleteProductAsync(int id);

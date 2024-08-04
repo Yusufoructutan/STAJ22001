@@ -18,7 +18,7 @@ public class UserRepository : IRepository<User>
         _dbSet = _context.Set<User>();
 
     }
-   
+
 
     public async Task<User> GetAsync(Expression<Func<User, bool>> predicate)
     {
@@ -61,5 +61,5 @@ public class UserRepository : IRepository<User>
         }
     }
 
-  
+
 }
