@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CartController : ControllerBase
@@ -15,19 +14,28 @@ public class CartController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddToCart([FromBody] CartItemDto cartItemDto)
+    public async Task<IActionResult> AddToCart([FromBody] CartItemCreateDto cartItemCreateDto)
     {
-        if (cartItemDto == null)
+        if (cartItemCreateDto == null)
         {
             return BadRequest("Sepet ürünü verileri geçersiz.");
         }
 
-        await _cartService.AddToCartAsync(cartItemDto);
+        await _cartService.AddToCartAsync(cartItemCreateDto);
         return Ok("Ürün sepete başarıyla eklendi.");
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateCartItem(int id, [FromBody] CartItemUpdateDto cartItemUpdateDto)
+    {
+        if (cartItemUpdateDto == null || cartItemUpdateDto.CartItemId != id)
+        {
+            return BadRequest("Güncelleme verileri geçersiz.");
+        }
 
-
+        await _cartService.UpdateCartItemAsync(cartItemUpdateDto);
+        return Ok("Ürün sepette başarıyla güncellendi.");
+    }
 
 
     [HttpDelete("{id}")]

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(ECommerceContext))]
-    [Migration("20240802113713_FixDuplicateRoleColumn")]
-    partial class FixDuplicateRoleColumn
+    [Migration("20240806112337_AddProductImageToProduct")]
+    partial class AddProductImageToProduct
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -138,10 +138,6 @@ namespace Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -175,6 +171,10 @@ namespace Ecommerce.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");

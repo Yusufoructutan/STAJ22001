@@ -29,6 +29,16 @@ public class CartItemBusiness : ICartItemBusiness
         var cartItems = await _cartItemRepository.GetAllAsync();
         return cartItems.Where(ci => ci.UserId == userId.Value).ToList();
     }
+    public async Task UpdateCartItemAsync(CartItem cartItem)
+    {
+        await _cartItemRepository.UpdateAsync(cartItem);
+    }
+
+    public async Task<CartItem> GetCartItemByIdAsync(int cartItemId)
+    {
+        var cartItems = await GetCartItemsByUserIdAsync();
+        return cartItems.FirstOrDefault(ci => ci.CartItemId == cartItemId);
+    }
 
     public async Task RemoveFromCartAsync(int cartItemId)
     {

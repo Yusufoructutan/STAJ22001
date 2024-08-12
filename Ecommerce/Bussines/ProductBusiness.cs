@@ -50,7 +50,8 @@ public class ProductBusiness : IProductBusiness
             Name = productDto.Name,
             Description = productDto.Description,
             Price = productDto.Price,
-            StockQuantity = productDto.StockQuantity
+            StockQuantity = productDto.StockQuantity,
+            ProductImage=productDto.ProductImage
         };
 
         await _productRepository.AddAsync(product);

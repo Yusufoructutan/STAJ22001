@@ -5,4 +5,6 @@ public interface ICartItemBusiness
     Task AddToCartAsync(CartItem cartItem);
     Task RemoveFromCartAsync(int cartItemId);
     Task<IEnumerable<CartItem>> GetCartItemsByUserIdAsync();
+
+    Task UpdateCartItemAsync(CartItem cartItem);
 }

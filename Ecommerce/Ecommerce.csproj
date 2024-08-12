@@ -9,6 +9,10 @@
   <ItemGroup>
     <Compile Remove="Migrations\20240802113411_RemovePhoneNumberColumn.cs" />
     <Compile Remove="Migrations\20240802113411_RemovePhoneNumberColumn.Designer.cs" />
+    <Compile Remove="Migrations\20240806110404_AddProductImageToProduct.cs" />
+    <Compile Remove="Migrations\20240806110404_AddProductImageToProduct.Designer.cs" />
+    <Compile Remove="Migrations\20240806111322_AddRoleToUser.cs" />
+    <Compile Remove="Migrations\20240806111322_AddRoleToUser.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

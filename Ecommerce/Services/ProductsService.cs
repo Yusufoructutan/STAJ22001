@@ -31,6 +31,7 @@ namespace Ecommerce.Services
                     Description = p.Description,
                     Price = p.Price,
                     StockQuantity = p.StockQuantity,
+                    ProductImage = p.ProductImage,
                     ProductCategories = p.ProductCategory != null
                         ? new List<ProductCategoryDto>
                         {
@@ -48,7 +49,10 @@ namespace Ecommerce.Services
 
         public async Task<ResponseProductDto> GetProductByIdAsync(int id)
         {
-            var product = await _productBusiness.GetProductByIdAsync(id);
+            var product = await _context.Products
+                .Include(p => p.ProductCategory) // Assuming it's a single object
+                .ThenInclude(pc => pc.Category)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
 
             if (product == null)
             {
@@ -62,6 +66,7 @@ namespace Ecommerce.Services
                 Description = product.Description,
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
+                ProductImage = product.ProductImage,
                 ProductCategories = product.ProductCategory != null
                     ? new List<ProductCategoryDto>
                     {
@@ -77,6 +82,7 @@ namespace Ecommerce.Services
 
             return productDto;
         }
+
 
         public async Task<int> AddProductAsync(ProductDto productDto)
         {

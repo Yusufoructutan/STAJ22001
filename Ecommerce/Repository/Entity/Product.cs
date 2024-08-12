@@ -8,6 +8,8 @@ public class Product
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
     public DateTime CreatedDate { get; set; }
+    public string ProductImage { get; set; } // Yeni eklenen alan
+
 
     // Navigasyon Özellikleri
     public ICollection<CartItem> CartItems { get; set; }

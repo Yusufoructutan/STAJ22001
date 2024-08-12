@@ -21,6 +21,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin() // Herhangi bir origin'e izin verir
+                   .AllowAnyMethod() // Herhangi bir HTTP yöntemine izin verir
+                   .AllowAnyHeader(); // Herhangi bir HTTP baþlýðýna izin verir
+        });
+});
+
 // Swagger configuration
 builder.Services.AddSwaggerGen(c =>
 {
@@ -50,9 +62,6 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
-
-    // Optionally, you can add filters here if needed
-    // c.OperationFilter<SwaggerIgnoreFilter>();
 });
 
 // Configure Entity Framework Core
@@ -146,6 +155,9 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API V1");
     });
 }
+
+// Use CORS policy
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
