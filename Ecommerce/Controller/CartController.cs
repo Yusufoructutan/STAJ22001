@@ -1,7 +1,7 @@
 ﻿using Ecommerce.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CartController : ControllerBase
@@ -12,7 +12,6 @@ public class CartController : ControllerBase
     {
         _cartService = cartService;
     }
-
     [HttpPost]
     public async Task<IActionResult> AddToCart([FromBody] CartItemCreateDto cartItemCreateDto)
     {
@@ -21,9 +20,24 @@ public class CartController : ControllerBase
             return BadRequest("Sepet ürünü verileri geçersiz.");
         }
 
-        await _cartService.AddToCartAsync(cartItemCreateDto);
-        return Ok("Ürün sepete başarıyla eklendi.");
+        try
+        {
+            await _cartService.AddToCartAsync(cartItemCreateDto);
+            return CreatedAtAction(nameof(AddToCart), new { productId = cartItemCreateDto.ProductId });
+        }
+        catch (ArgumentException ex)
+        {
+            // Geçersiz ürün ID'si veya diğer argüman hataları
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            // Diğer genel hatalar
+            // Loglama işlemi burada yapılabilir
+            return StatusCode(500, "Sepete ürün eklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+        }
     }
+
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCartItem(int id, [FromBody] CartItemUpdateDto cartItemUpdateDto)
@@ -34,7 +48,7 @@ public class CartController : ControllerBase
         }
 
         await _cartService.UpdateCartItemAsync(cartItemUpdateDto);
-        return Ok("Ürün sepette başarıyla güncellendi.");
+        return Ok("urun sepette başarıyla güncellendi.");
     }
 
 
@@ -42,7 +56,7 @@ public class CartController : ControllerBase
     public async Task<IActionResult> RemoveFromCart(int id)
     {
         await _cartService.RemoveFromCartAsync(id);
-        return Ok("Ürün sepetten başarıyla kaldırıldı.");
+        return Ok("urun sepetten başarıyla kaldırıldı.");
     }
 
     [HttpGet]

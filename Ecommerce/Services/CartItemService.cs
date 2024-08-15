@@ -1,5 +1,4 @@
-﻿
-using Ecommerce.DTO;
+﻿using Ecommerce.DTO;
 using Ecommerce.Repository.Entity;
 using System.Security.Claims;
 
@@ -16,53 +15,79 @@ public class CartItemService : ICartItemService
         _cartBusiness = cartBusiness;
     }
 
-
     private int GetUserId()
     {
-        // Token'dan kullanıcı ID'sini almak için uygun yöntemi kullanın
         var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.Parse(userIdClaim);
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+        {
+            throw new InvalidOperationException("Kullanıcı ID'si alınamadı.");
+        }
+        return userId;
     }
-
 
     public async Task AddToCartAsync(CartItemCreateDto cartItemCreateDto)
     {
         var userId = GetUserId();
 
+        if (cartItemCreateDto.ProductId <= 0)
+        {
+            throw new ArgumentException("Geçersiz ürün ID'si.");
+        }
+
         var cartItem = new CartItem
         {
-            UserId = 1,
+            UserId = userId,
             ProductId = cartItemCreateDto.ProductId,
             Quantity = cartItemCreateDto.Quantity,
-            CreatedDate = DateTime.Now
+            CreatedDate = DateTime.UtcNow // UTC zamanı kullanılması daha uygun olabilir
         };
 
-        await _cartItemRepository.AddAsync(cartItem);
+        try
+        {
+            await _cartItemRepository.AddAsync(cartItem);
+        }
+        catch (Exception ex)
+        {
+            // Hata loglama ve yönetimi
+            throw new InvalidOperationException("Sepete ürün eklenirken bir hata oluştu.", ex);
+        }
     }
 
     public async Task UpdateCartItemAsync(CartItemUpdateDto cartItemUpdateDto)
     {
-        // Kullanıcının sepetindeki ilgili ürünün mevcut durumunu al
+        var userId = GetUserId();
         var existingCartItems = await _cartBusiness.GetCartItemsByUserIdAsync();
         var existingCartItem = existingCartItems.FirstOrDefault(ci => ci.CartItemId == cartItemUpdateDto.CartItemId);
 
         if (existingCartItem == null)
         {
-            throw new InvalidOperationException("Güncellenecek ürün bulunamadı.");
+            throw new InvalidOperationException("Güncellenecek urun bulunamadı.");
         }
 
-        // Sadece quantity değerini güncelle
         existingCartItem.Quantity = cartItemUpdateDto.Quantity;
 
-        // Güncellenmiş ürün nesnesini repoya gönder
-        await _cartBusiness.UpdateCartItemAsync(existingCartItem);
+        try
+        {
+            await _cartBusiness.UpdateCartItemAsync(existingCartItem);
+        }
+        catch (Exception ex)
+        {
+            // Hata loglama ve yönetimi
+            throw new InvalidOperationException("Sepet urun güncellenirken bir hata oluştu.", ex);
+        }
     }
-
-
 
     public async Task RemoveFromCartAsync(int cartItemId)
     {
-        await _cartBusiness.RemoveFromCartAsync(cartItemId);
+        try
+        {
+            await _cartBusiness.RemoveFromCartAsync(cartItemId);
+        }
+        catch (Exception ex)
+        {
+            // Hata loglama ve yönetimi
+            throw new InvalidOperationException("Sepet urunü silinirken bir hata oluştu.", ex);
+        }
     }
 
     public async Task<IEnumerable<CartItemDto>> GetCartItemsAsync()
@@ -71,7 +96,6 @@ public class CartItemService : ICartItemService
         return cartItems.Select(ci => new CartItemDto
         {
             CartItemId = ci.CartItemId,
-            UserId =1,
             ProductId = ci.ProductId,
             Quantity = ci.Quantity
         });

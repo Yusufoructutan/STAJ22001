@@ -35,7 +35,7 @@ public class OrderController : ControllerBase
             var userId = GetCurrentUserId(); // Kullanıcının ID'sini alın
             var orderId = await _orderService.CreateOrderFromCartAsync(userId);
 
-            // Başarıyla oluşturulan siparişi döndürün
+            // Başarıyla oluşturulan siparişi döndurun
             return CreatedAtAction(
                 nameof(GetOrderById),
                 new { id = orderId },
@@ -47,7 +47,7 @@ public class OrderController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            // Hata durumunda uygun yanıt döndürün
+            // Hata durumunda uygun yanıt döndurun
             return BadRequest(new
             {
                 ErrorMessage = ex.Message

@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 
 public interface IProductBusiness
 {
-    // Tüm ürünleri DTO olarak al
+    // Tüm urunleri DTO olarak al
     Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync();
 
-    // Belirli bir ürünün detaylarını Product olarak al
+    // Belirli bir urunün detaylarını Product olarak al
     Task<Product> GetProductByIdAsync(int id);
 
-    // Yeni ürün ekle
+    // Yeni urun ekle
     Task<int> AddProductAsync(ProductDto productDto);
 
-    // Ürünü güncelle
+    // urunü güncelle
     Task UpdateProductAsync(int productId, ProductDto updatedProductDto);
 
-    // Ürünü sil
+    // urunü sil
     Task DeleteProductAsync(int id);
 }

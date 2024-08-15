@@ -24,6 +24,12 @@ namespace Ecommerce.Repository
                 .ThenInclude(pc => pc.Category)   // Category'yi yükle
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
+        {
+            return await _context.Products
+                .Where(p => p.ProductCategory.CategoryId == categoryId)
+                .ToListAsync();
+        }
 
 
 

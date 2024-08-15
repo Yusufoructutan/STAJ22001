@@ -55,7 +55,7 @@ public class ProductController : ControllerBase
 
         var response = new
         {
-            Message = "Ürün başarıyla eklendi.",
+            Message = "urun başarıyla eklendi.",
             ProductId = productId
         };
 
@@ -71,7 +71,7 @@ public class ProductController : ControllerBase
         try
         {
             await _productService.DeleteProductAsync(id);
-            return Ok(new { Message = "Ürün başarıyla silindi." });
+            return Ok(new { Message = "urun başarıyla silindi." });
         }
         catch (Exception ex)
         {
@@ -94,7 +94,7 @@ public class ProductController : ControllerBase
         try
         {
             await _productService.UpdateProductAsync(id, updatedProductDto);
-            return Ok(new { Message = "Ürün başarıyla güncellendi." });
+            return Ok(new { Message = "urun başarıyla güncellendi." });
         }
         catch (Exception ex)
         {
@@ -102,6 +102,23 @@ public class ProductController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+
+
+    [HttpGet("category/{categoryId}")]
+    public async Task<IActionResult> GetProductsByCategory(int categoryId)
+    {
+        try
+        {
+            var products = await _productService.GetProductsByCategoryAsync(categoryId);
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
 
 
 

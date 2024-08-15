@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Repository.Models;
+using Ecommerce.Repository;
 
 namespace Ecommerce.Services
 {
@@ -11,11 +12,13 @@ namespace Ecommerce.Services
     {
         private readonly IProductBusiness _productBusiness;
         private readonly ECommerceContext _context;
+        private readonly IProductRepository _productRepository;
 
-        public ProductService(IProductBusiness productBusiness, ECommerceContext context)
+        public ProductService(IProductBusiness productBusiness, ECommerceContext context,IProductRepository productRepository)
         {
             _productBusiness = productBusiness;
             _context = context;
+            _productRepository = productRepository;
 
         }
 
@@ -45,6 +48,10 @@ namespace Ecommerce.Services
                         : new List<ProductCategoryDto>()
                 })
                 .ToListAsync();
+        }
+        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
+        {
+            return await _productRepository.GetProductsByCategoryAsync(categoryId);
         }
 
         public async Task<ResponseProductDto> GetProductByIdAsync(int id)

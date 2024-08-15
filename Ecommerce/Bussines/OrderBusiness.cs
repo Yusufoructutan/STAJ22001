@@ -50,11 +50,11 @@ public class OrderBusiness : IOrderBusiness
             {
                 if (product.StockQuantity < cartItem.Quantity)
                 {
-                    throw new InvalidOperationException($"Yetersiz stok: {product.Name} ürünü için yeterli stok yok.");
+                    throw new InvalidOperationException($"Yetersiz stok: {product.Name} urunü için yeterli stok yok.");
                 }
 
                 product.StockQuantity -= cartItem.Quantity;
-                // Ürünün stok miktarını güncelle
+                // urunün stok miktarını güncelle
                 await _repository.UpdateAsync(product);
 
                 // OrderItem'ı oluşturun
