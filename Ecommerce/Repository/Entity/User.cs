@@ -15,7 +15,6 @@ namespace Ecommerce.Repository.Entity
 
 
 
-        // Navigasyon Özellikleri
         public ICollection<CartItem> CartItems { get; set; }
         public ICollection<Order> Orders { get; set; }
 

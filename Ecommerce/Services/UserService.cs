@@ -29,7 +29,7 @@ public class UserService : IUserService
             Username = registerDto.Username,
             Email = registerDto.Email,
             CreatedDate = DateTime.UtcNow,
-            Role = "User" // Varsayılan rol
+            Role = "User" 
         };
         await _userBusiness.RegisterUserAsync(user, registerDto.Password);
     }
@@ -39,8 +39,8 @@ public class UserService : IUserService
         var user = await _userBusiness.GetUserByIdAsync(userId);
         if (user != null)
         {
-            user.Role = "Admin"; // Rolü admin olarak değiştir
-            await _userBusiness.UpdateUserAsync(user); // Kullanıcıyı güncelle
+            user.Role = "Admin"; 
+            await _userBusiness.UpdateUserAsync(user); 
         }
     }
 
@@ -53,14 +53,14 @@ public class UserService : IUserService
             var user = await _userBusiness.GetUserByUsernameAsync(loginDto.Username);
             if (user == null)
             {
-                return "Hatalı kullanıcı adı veya şifre."; // Genel hata mesajı
+                return "Hatalı kullanıcı adı veya şifre."; 
             }
 
             var token = GenerateJwtToken(user);
-            return token; // Başarıyla oluşturulan token
+            return token; 
         }
 
-        return "Hatalı kullanıcı adı veya şifre."; // Genel hata mesajı
+        return "Hatalı kullanıcı adı veya şifre."; 
     }
 
     private string GenerateJwtToken(User user)
@@ -73,14 +73,14 @@ public class UserService : IUserService
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]); // Konfigürasyondan anahtarı al
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]); 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1), // Token süresi
+            Expires = DateTime.UtcNow.AddHours(1), 
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-            Issuer = _configuration["Jwt:Issuer"], // Konfigürasyondan Issuer al
-            Audience = _configuration["Jwt:Audience"] // Konfigürasyondan Audience al
+            Issuer = _configuration["Jwt:Issuer"], 
+            Audience = _configuration["Jwt:Audience"] 
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);

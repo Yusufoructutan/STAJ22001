@@ -6,14 +6,14 @@ namespace Ecommerce.Repository
     {
 
 
-        // Belirtilen sipariş ID'sine sahip siparişi asenkron olarak getirir.
         Task<Order> GetOrderByIdAsync(int orderId);
 
 
 
-        // Yeni bir siparişi asenkron olarak ekler.
         Task AddAsync(Order order);
 
+
+        Task<List<Order>> GetOrdersByUserIdAsync(int userId);
 
 
 

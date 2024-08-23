@@ -11,4 +11,6 @@ public interface IProductService
     Task<int> AddProductAsync(ProductDto productDto);
     Task UpdateProductAsync(int productId, ProductDto updatedProductDto);
     Task DeleteProductAsync(int id);
+    Task<List<ResponseProductDto>> SearchProductsAsync(string searchTerm);
+
 }

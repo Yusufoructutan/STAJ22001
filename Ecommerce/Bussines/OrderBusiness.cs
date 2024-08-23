@@ -39,10 +39,10 @@ public class OrderBusiness : IOrderBusiness
             UserId = userId,
             OrderDate = DateTime.Now,
             TotalAmount = cartItems.Sum(ci => ci.Quantity * products.First(p => p.ProductId == ci.ProductId).Price),
-            OrderItems = orderItems // Burada OrderItems'ı ekliyoruz
+            OrderItems = orderItems 
         };
 
-        // OrderItems'ı oluşturun
+        
         foreach (var cartItem in cartItems)
         {
             var product = products.FirstOrDefault(p => p.ProductId == cartItem.ProductId);
@@ -54,10 +54,8 @@ public class OrderBusiness : IOrderBusiness
                 }
 
                 product.StockQuantity -= cartItem.Quantity;
-                // urunün stok miktarını güncelle
                 await _repository.UpdateAsync(product);
 
-                // OrderItem'ı oluşturun
                 orderItems.Add(new OrderItem
                 {
                     ProductId = cartItem.ProductId,
@@ -81,6 +79,10 @@ public class OrderBusiness : IOrderBusiness
         return await _orderRepository.GetOrderByIdAsync(orderId);
     }
 
+    public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+    {
+        return await _orderRepository.GetOrdersByUserIdAsync(userId);
+    }
 
 
 

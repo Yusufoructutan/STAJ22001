@@ -16,12 +16,12 @@ namespace Ecommerce.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // Yalnızca GetAllAsync yöntemini kullanacağız
+        
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
             return await _context.Products
-                .Include(p => p.ProductCategory) // Product ve ProductCategory ilişkisini yükle
-                .ThenInclude(pc => pc.Category)   // Category'yi yükle
+                .Include(p => p.ProductCategory) 
+                .ThenInclude(pc => pc.Category)   
                 .ToListAsync();
         }
         public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
@@ -36,8 +36,8 @@ namespace Ecommerce.Repository
         public async Task<Product> GetByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.ProductCategory) // Product ve ProductCategory ilişkisini yükle
-                .ThenInclude(pc => pc.Category)   // Category'yi yükle
+                .Include(p => p.ProductCategory) 
+                .ThenInclude(pc => pc.Category)   
                 .FirstOrDefaultAsync(p => p.ProductId == id);
         }
 
@@ -62,13 +62,19 @@ namespace Ecommerce.Repository
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<List<Product>> SearchProductsAsync(string searchTerm)
+        {
+            return await _context.Products
+                .Where(p => p.Name.Contains(searchTerm))
+                .ToListAsync();
+        }
 
-        // Opsiyonel: Product'ların belirli bir liste id'sine sahip olanlarını almak için ek bir yöntem
+
         public async Task<List<Product>> GetProductsByIdsAsync(IEnumerable<int> productIds)
         {
             if (productIds == null || !productIds.Any())
             {
-                return new List<Product>(); // Boş liste döndür
+                return new List<Product>(); 
             }
 
             try
@@ -79,9 +85,8 @@ namespace Ecommerce.Repository
             }
             catch (Exception ex)
             {
-                // Hata loglama
                 Console.WriteLine($"Hata: {ex.Message}");
-                throw; // Hatanın üst seviyeye iletilmesini sağlar
+                throw; 
             }
         }
     }

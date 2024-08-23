@@ -37,10 +37,34 @@ public class OrderService : IOrderService
             OrderItems = order.OrderItems.Select(oi => new OrderItemDto
             {
                 OrderItemId = oi.OrderItemId,
+                OrderId = oi.OrderId,
                 ProductId = oi.ProductId,
                 Quantity = oi.Quantity,
                 UnitPrice = oi.UnitPrice 
             }).ToList()
         };
     }
+
+    public async Task<List<OrderDto>> GetOrdersByUserIdAsync(int userId)
+    {
+        var orders = await _orderBusiness.GetOrdersByUserIdAsync(userId);
+
+        return orders.Select(order => new OrderDto
+        {
+            OrderId = order.OrderId,
+            UserId = order.UserId,
+            OrderDate = order.OrderDate,
+            TotalAmount = order.TotalAmount,
+            OrderItems = order.OrderItems.Select(oi => new OrderItemDto
+            {
+                OrderItemId = oi.OrderItemId,
+                OrderId = oi.OrderId,
+                ProductId = oi.ProductId,
+                Quantity = oi.Quantity,
+                UnitPrice = oi.UnitPrice
+            }).ToList()
+        }).ToList();
+    }
+
+
 }

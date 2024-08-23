@@ -16,8 +16,8 @@ public class OrderRepository :Repository<Order>,IOrderRepository
     public async Task<Order> GetOrderByIdAsync(int orderId)
     {
         return await _context.Orders
-            .Include(o => o.OrderItems) // İlgili OrderItems'i de dahil et
-            .ThenInclude(oi => oi.Product) // OrderItems içindeki Product'ı dahil et
+            .Include(o => o.OrderItems) 
+            .ThenInclude(oi => oi.Product) 
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
 
@@ -27,22 +27,27 @@ public class OrderRepository :Repository<Order>,IOrderRepository
             throw new ArgumentNullException(nameof(order));
 
         if (order.OrderItems == null)
-            order.OrderItems = new List<OrderItem>(); // Eğer OrderItems null ise, boş bir liste oluşturun.
+            order.OrderItems = new List<OrderItem>(); 
 
-        // Order ve OrderItems'i veritabanına ekleyin
         await _context.Orders.AddAsync(order);
 
-        // OrderItems'ı da ekleyin (Bağlantılar zaten kurulmuş olmalı)
         foreach (var item in order.OrderItems)
         {
-            // Eğer item null olabilir veya item'in ProductId'si null olabilir, bu durumda kontrol ekleyin.
             if (item != null && item.ProductId != 0)
             {
-                _context.OrderItems.Add(item); // OrderItems koleksiyonunu veritabanına ekleyin
+                _context.OrderItems.Add(item); 
             }
         }
 
         await _context.SaveChangesAsync();
+    }
+    public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+    {
+        return await _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .Where(o => o.UserId == userId)
+            .ToListAsync();
     }
 
 

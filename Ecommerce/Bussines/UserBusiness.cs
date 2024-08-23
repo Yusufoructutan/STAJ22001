@@ -51,7 +51,6 @@ namespace Ecommerce.Business
 
         public async Task UpdateUserAsync(User user)
         {
-            // Kullanıcıyı güncelle
             await _userRepository.UpdateAsync(user);
         }
     }

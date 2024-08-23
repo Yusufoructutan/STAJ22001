@@ -14,7 +14,6 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    // Kullanıcı kaydı
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {

@@ -27,9 +27,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         builder =>
         {
-            builder.AllowAnyOrigin() // Herhangi bir origin'e izin verir
-                   .AllowAnyMethod() // Herhangi bir HTTP yöntemine izin verir
-                   .AllowAnyHeader(); // Herhangi bir HTTP baþlýðýna izin verir
+            builder.AllowAnyOrigin() 
+                   .AllowAnyMethod() 
+                   .AllowAnyHeader(); 
         });
 });
 
@@ -107,8 +107,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnChallenge = context =>
             {
-                context.HandleResponse(); // Disable default behavior
-                context.Response.StatusCode = StatusCodes.Status403Forbidden; // Return 403 error
+                context.HandleResponse(); 
+                context.Response.StatusCode = StatusCodes.Status403Forbidden; 
                 context.Response.ContentType = "application/json";
                 var response = new
                 {
@@ -119,7 +119,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             OnForbidden = context =>
             {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden; // Return 403 error
+                context.Response.StatusCode = StatusCodes.Status403Forbidden; 
                 context.Response.ContentType = "application/json";
                 var response = new
                 {
@@ -131,7 +131,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configure authorization policies
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -142,11 +142,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 
-// Use custom exception middleware
-// Uncomment the line below if you have a custom exception middleware
-// app.UseMiddleware<CustomExceptionMiddleware>();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -156,7 +152,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Use CORS policy
+
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();

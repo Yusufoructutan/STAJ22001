@@ -4,7 +4,7 @@ using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-/*
+
 public class CustomExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -40,4 +40,3 @@ public class CustomExceptionMiddleware
         }
     }
 }
-*/

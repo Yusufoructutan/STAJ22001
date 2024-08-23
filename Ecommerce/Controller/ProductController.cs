@@ -16,7 +16,6 @@ public class ProductController : ControllerBase
 
 
 
-    // GET api/product/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(int id)
     {
@@ -75,13 +74,22 @@ public class ProductController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception
-            // _logger.LogError(ex, "Error while deleting product with ID {id}", id);
+
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return BadRequest("Arama terimi boş olamaz.");
+        }
 
+        var products = await _productService.SearchProductsAsync(query);
+        return Ok(products);
+    }
 
 
 
@@ -98,7 +106,6 @@ public class ProductController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }

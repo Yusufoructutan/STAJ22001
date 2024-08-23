@@ -27,13 +27,11 @@ public class CartController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            // Geçersiz ürün ID'si veya diğer argüman hataları
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            // Diğer genel hatalar
-            // Loglama işlemi burada yapılabilir
+          
             return StatusCode(500, "Sepete ürün eklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
         }
     }

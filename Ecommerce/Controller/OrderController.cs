@@ -18,7 +18,6 @@ public class OrderController : ControllerBase
 
     private int GetCurrentUserId()
     {
-        // Kullanıcı kimliğini almak için ASP.NET Core Identity kullanıyorsanız:
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (int.TryParse(userId, out int id))
         {
@@ -32,10 +31,9 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var userId = GetCurrentUserId(); // Kullanıcının ID'sini alın
+            var userId = GetCurrentUserId();
             var orderId = await _orderService.CreateOrderFromCartAsync(userId);
 
-            // Başarıyla oluşturulan siparişi döndurun
             return CreatedAtAction(
                 nameof(GetOrderById),
                 new { id = orderId },
@@ -47,8 +45,24 @@ public class OrderController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            // Hata durumunda uygun yanıt döndurun
             return BadRequest(new
+            {
+                ErrorMessage = ex.Message
+            });
+        }
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetUserOrders()
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 ErrorMessage = ex.Message
             });

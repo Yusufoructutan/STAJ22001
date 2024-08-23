@@ -21,12 +21,15 @@ namespace Ecommerce.Services
             _productRepository = productRepository;
 
         }
-
+        public async Task<List<ResponseProductDto>> SearchProductsAsync(string searchTerm)
+        {
+            return await _productBusiness.SearchProductsAsync(searchTerm);
+        }
         public async Task<IEnumerable<ResponseProductDto>> GetAllProductsAsync()
         {
             return await _context.Products
-                .Include(p => p.ProductCategory) // ProductCategory'yi de dahil et
-                .ThenInclude(pc => pc.Category) // Category'yi de dahil et
+                .Include(p => p.ProductCategory)
+                .ThenInclude(pc => pc.Category) 
                 .Select(p => new ResponseProductDto
                 {
                     ProductId = p.ProductId,
@@ -42,7 +45,7 @@ namespace Ecommerce.Services
                         {
                             ProductCategoryId = p.ProductCategory.ProductCategoryId,
                             CategoryId = p.ProductCategory.CategoryId,
-                            CategoryName = p.ProductCategory.Category.Name // Kategori adını al
+                            CategoryName = p.ProductCategory.Category.Name 
                         }
                         }
                         : new List<ProductCategoryDto>()
@@ -57,7 +60,7 @@ namespace Ecommerce.Services
         public async Task<ResponseProductDto> GetProductByIdAsync(int id)
         {
             var product = await _context.Products
-                .Include(p => p.ProductCategory) // Assuming it's a single object
+                .Include(p => p.ProductCategory) 
                 .ThenInclude(pc => pc.Category)
                 .FirstOrDefaultAsync(p => p.ProductId == id);
 

@@ -12,14 +12,16 @@ public class ProductBusiness : IProductBusiness
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<ProductCategory> _productCategoryRepository;
     private readonly IRepository<Category> _categoryRepository;
+    private readonly IProductRepository productRepository1;
     private readonly ECommerceContext _context;
 
-    public ProductBusiness(IRepository<Product> productRepository, IRepository<ProductCategory> productCategoryRepository, ECommerceContext context,IRepository<Category> categoryRepository)
+    public ProductBusiness(IRepository<Product> productRepository, IRepository<ProductCategory> productCategoryRepository, ECommerceContext context,IRepository<Category> categoryRepository, IProductRepository productRepository1)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
         _categoryRepository = categoryRepository;
         _context = context;
+        this.productRepository1 = productRepository1;
     }
 
     public async Task<Product> GetProductByIdAsync(int id)
@@ -38,9 +40,22 @@ public class ProductBusiness : IProductBusiness
             Description = p.Description,
             Price = p.Price,
             StockQuantity = p.StockQuantity,
-            // ProductCategoryDto ekleyin
-
         });
+    }
+    public async Task<List<ResponseProductDto>> SearchProductsAsync(string searchTerm)
+    {
+        var products = await productRepository1.SearchProductsAsync(searchTerm);
+
+        return products.Select(p => new ResponseProductDto
+        {
+            ProductId = p.ProductId,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            ProductImage=p.ProductImage,
+
+
+        }).ToList();
     }
 
     public async Task<int> AddProductAsync(ProductDto productDto)

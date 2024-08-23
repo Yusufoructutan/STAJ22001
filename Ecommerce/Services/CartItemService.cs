@@ -39,7 +39,7 @@ public class CartItemService : ICartItemService
             UserId = userId,
             ProductId = cartItemCreateDto.ProductId,
             Quantity = cartItemCreateDto.Quantity,
-            CreatedDate = DateTime.UtcNow // UTC zamanı kullanılması daha uygun olabilir
+            CreatedDate = DateTime.UtcNow 
         };
 
         try
@@ -48,7 +48,6 @@ public class CartItemService : ICartItemService
         }
         catch (Exception ex)
         {
-            // Hata loglama ve yönetimi
             throw new InvalidOperationException("Sepete ürün eklenirken bir hata oluştu.", ex);
         }
     }
@@ -72,7 +71,6 @@ public class CartItemService : ICartItemService
         }
         catch (Exception ex)
         {
-            // Hata loglama ve yönetimi
             throw new InvalidOperationException("Sepet urun güncellenirken bir hata oluştu.", ex);
         }
     }
@@ -85,7 +83,6 @@ public class CartItemService : ICartItemService
         }
         catch (Exception ex)
         {
-            // Hata loglama ve yönetimi
             throw new InvalidOperationException("Sepet urunü silinirken bir hata oluştu.", ex);
         }
     }
